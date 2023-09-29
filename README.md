@@ -22,7 +22,7 @@ After completing these steps, you will have the following services accessible:
 
 You can configure the settings for all these services in either the ```docker-compose.yml``` file or the ```.env```(don't forget create ```.env``` from ```.env.example```) file.
 
-> Note: Nginx is running using the trafex/php-nginx Docker image. For
+> Note: Nginx is running using the [trafex/php-nginx](https://hub.docker.com/r/trafex/php-nginx) Docker image. For
 > the PHP server, you can customize the configurations for Nginx and
 > PHP, which are located in ```./Containers/PHP/nginx``` and
 > ```./Containers/PHP/php```. Feel free to adjust them according to your
