@@ -13,12 +13,12 @@ docker-compose build && docker-compose up -d
 ```
 After completing these steps, you will have the following services accessible:
 
-PHP Project: http://localhost:8080
-Adminer (MySQL Database Management): http://localhost:8090
-Portainer (Container Management): http://localhost:9000
-Node.js Project 1: http://localhost:3000
-Node.js Project 2: http://localhost:3000
-Redis Port: localhost:9091
+- PHP Project: http://localhost:8080
+- Adminer (MySQL Database Management): http://localhost:8090
+- Portainer (Container Management): http://localhost:9000
+- Node.js : http://localhost:3000
+- Rabbit MQ Panel: http://localhost:9090
+- Rabbit MQ Port: localhost:9091
 
 You can configure the settings for all these services in either the ```docker-compose.yml``` file or the ```.env```(don't forget create ```.env``` from ```.env.example```) file.
 
