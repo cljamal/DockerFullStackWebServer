@@ -1,4 +1,16 @@
 version: '3'
+
+x-logging: &default-logging
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-healthcheck: &default-health-check
+  interval: 30s
+  timeout: 10s
+  retries: 5
+
 services:
   webserver:
     container_name: ${PHP_CONTAINER_NAME}
@@ -16,29 +28,44 @@ services:
     working_dir: /var/www
     ports:
       - 8080:8080
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
 
   mysql:
-    image: mysql:8.1
     container_name: ${MYSQL_CONTAINER_NAME}
     hostname: ${MYSQL_CONTAINER_NAME}
     restart: unless-stopped
+    build: ${MYSQL_PATH}
     volumes:
       - ${STORAGE_ROOT_PATH}/MySQL:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
 
   adminer:
-    image: adminer:latest    
     container_name: ${ADMINER_CONTAINER_NAME}
     hostname: ${ADMINER_CONTAINER_NAME}
     restart: unless-stopped
+    build: ${ADMINER_PATH}
     environment:
       ADMINER_DEFAULT_SERVER: ${MYSQL_CONTAINER_NAME}
     ports:
       - 8090:8080
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
 
   node:
-    container_name: NODEJS_SERVER
+    container_name: ${NODEJS_CONTAINER_NAME}
+    hostname: ${NODEJS_CONTAINER_NAME}
     build: ${NODEJS_PATH}
     restart: unless-stopped
     volumes:
@@ -47,11 +74,16 @@ services:
     working_dir: /var/www
     ports:
       - 3000:3000
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
   
   rabbitmq:
-    image: rabbitmq:3-management
     container_name: ${RABBIT_MQ_CONTAINER_NAME}
     hostname: ${RABBIT_MQ_CONTAINER_NAME}
+    build: ${RABBIT_MQ_PATH}
     restart: unless-stopped
     volumes:
       - ${STORAGE_ROOT_PATH}/RabbiMq:/var/lib/rabbitmq
@@ -59,23 +91,54 @@ services:
      - RABBITMQ_DEFAULT_PASS=${RABBIT_MQ_PASS}
      - RABBITMQ_DEFAULT_USER=${RABBIT_MQ_USER}
     ports:
-      - 9090:15672 # Redis Management Panel
-      - 9091:5672 # Redis port
+      - 9090:15672 # RabbitMQ Management Panel
+      - 9091:5672 # RabbitMQ port
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
     
   redis:
-    image: redis:latest    
     container_name: ${REDIS_CONTAINER_NAME}
     hostname: ${REDIS_CONTAINER_NAME}
+    build: ${REDIS_PATH}
     restart: unless-stopped
     volumes:
       - ${STORAGE_ROOT_PATH}/Redis:/data
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
 
   portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
+    container_name: ${PORTAINER_CONTAINER_NAME}
+    hostname: ${PORTAINER_CONTAINER_NAME}
+    build: ${PORTAINER_PATH}
     restart: always
     ports:
       - 9000:9000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${STORAGE_ROOT_PATH}/Portainer/data:/data
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
+  python:
+    container_name: ${PYTHON_CONTAINER_NAME}
+    hostname: ${PYTHON_CONTAINER_NAME}
+    build: ${PYTHON_PATH}
+    restart: always
+    volumes:
+      - ${SITES_PATH}:/var/www
+    tty: true
+    logging: *default-logging
+    healthcheck:
+      <<: *default-health-check
+      start_period: 30s
+
+
+
