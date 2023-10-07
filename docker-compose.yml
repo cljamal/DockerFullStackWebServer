@@ -132,6 +132,8 @@ services:
     hostname: ${PYTHON_CONTAINER_NAME}
     build: ${PYTHON_PATH}
     restart: always
+    ports:
+      - 8000:8000
     volumes:
       - ${SITES_PATH}:/var/www
     tty: true
@@ -139,6 +141,3 @@ services:
     healthcheck:
       <<: *default-health-check
       start_period: 30s
-
-
-
